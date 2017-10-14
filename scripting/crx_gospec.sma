@@ -1,8 +1,9 @@
 #include <amxmodx>
+#include <cromchat>
 #include <cstrike>
 #include <hamsandwich>
 
-#define PLUGIN_VERSION "1.1"
+#define PLUGIN_VERSION "1.2"
 
 enum _:Cvars
 {
@@ -13,17 +14,15 @@ enum _:Cvars
 
 new g_eCvars[Cvars]
 
-new const g_szPrefix[] = "^1[^3GoSpec^1]"
-
 new CsTeams:g_iOldTeam[33],
 	g_iSpecFlag,
-	g_iChangeFlag,
-	g_iSayText
+	g_iChangeFlag
 
 public plugin_init()
 {
 	register_plugin("GoSpec", PLUGIN_VERSION, "OciXCrom")
 	register_cvar("@CRXGoSpec", PLUGIN_VERSION, FCVAR_SERVER|FCVAR_SPONLY|FCVAR_UNLOGGED)
+	register_dictionary("GoSpec.txt")
 	
 	register_clcmd("say /spec", "GoSpec")
 	register_clcmd("say /back", "GoBack")
@@ -32,7 +31,7 @@ public plugin_init()
 	g_eCvars[gospec_spec_flag] = register_cvar("gospec_spec_flag", "e")
 	g_eCvars[gospec_change_flag] = register_cvar("gospec_change_flag", "e")
 	g_eCvars[gospec_respawn] = register_cvar("gospec_respawn", "0")
-	g_iSayText = get_user_msgid("SayText")
+	CC_SetPrefix("[&x03GoSpec&x01]")
 }
 
 public plugin_cfg()
@@ -52,12 +51,12 @@ public GoSpec(id)
 	new CsTeams:iTeam = cs_get_user_team(id)
 		
 	if(iTeam == CS_TEAM_SPECTATOR)
-		ColorChat(id, "You are already a spectator!")
+		CC_SendMessage(id, "%L", id, "GOSPEC_ALREADY_SPECTATOR")
 	else
 	{
 		g_iOldTeam[id] = iTeam
 		cs_set_user_team(id, CS_TEAM_SPECTATOR)
-		ColorChat(id, "You are now a spectator.")
+		CC_SendMessage(id, "%L", id, "GOSPEC_NOW_SPECTATOR")
 		
 		if(is_user_alive(id))
 			user_silentkill(id)
@@ -72,7 +71,7 @@ public GoBack(id)
 		return PLUGIN_HANDLED
 		
 	if(cs_get_user_team(id) != CS_TEAM_SPECTATOR)
-		ColorChat(id, "You are not a spectator!")
+		CC_SendMessage(id, "%L", id, "GOSPEC_NOT_SPECTATOR")
 	else
 	{
 		new iPlayers[32], iCT, iT
@@ -82,12 +81,12 @@ public GoBack(id)
 		if(iCT == iT)
 		{
 			cs_set_user_team(id, g_iOldTeam[id])
-			ColorChat(id, "You have been transfered back to your previous team.")
+			CC_SendMessage(id, "%L", id, "GOSPEC_TRANSFERED_TO_PREVIOUS")
 		}
 		else
 		{
 			cs_set_user_team(id, iCT > iT ? CS_TEAM_T : CS_TEAM_CT)
-			ColorChat(id, "You have been transfered to the team with less players.")
+			CC_SendMessage(id, "%L", id, "GOSPEC_TRANSFERED_TO_LESS")
 		}
 		
 		if(get_pcvar_num(g_eCvars[gospec_respawn]))
@@ -106,11 +105,11 @@ public SwitchTeam(id)
 		
 		
 	if(iTeam == CS_TEAM_SPECTATOR)
-		ColorChat(id, "You can't use this command while a spectator.")
+		CC_SendMessage(id, "%L", id, "GOSPEC_CANT_USE")
 	else
 	{
 		cs_set_user_team(id, cs_get_user_team(id) == CS_TEAM_CT ? CS_TEAM_T : CS_TEAM_CT)
-		ColorChat(id, "You have been transfered to the opposite team.")
+		CC_SendMessage(id, "%L", id, "GOSPEC_TRANSFERED_TO_OPPOSITE")
 		
 		if(is_user_alive(id))
 		{
@@ -130,35 +129,11 @@ bool:HasAccess(id, iFlag)
 		return true
 	else
 	{
-		ColorChat(id, "You have no access to this command!")
+		CC_SendMessage(id, "%L", id, "GOSPEC_NO_ACCESS")
 		return false
 	}
-}
-
-ColorChat(const id, const szInput[], any:...)
-{
-	new iPlayers[32], iCount = 1
-	static szMessage[191]
-	vformat(szMessage, charsmax(szMessage), szInput, 3)
-	format(szMessage[0], charsmax(szMessage), "%s %s", g_szPrefix, szMessage)
 	
-	replace_all(szMessage, charsmax(szMessage), "!g", "^4")
-	replace_all(szMessage, charsmax(szMessage), "!n", "^1")
-	replace_all(szMessage, charsmax(szMessage), "!t", "^3")
-	
-	if(id)
-		iPlayers[0] = id
-	else
-		get_players(iPlayers, iCount, "ch")
-	
-	for(new i; i < iCount; i++)
-	{
-		if(is_user_connected(iPlayers[i]))
-		{
-			message_begin(MSG_ONE_UNRELIABLE, g_iSayText, _, iPlayers[i])
-			write_byte(iPlayers[i])
-			write_string(szMessage)
-			message_end()
-		}
-	}
+	#if AMXX_VERSION_NUM < 183
+	return false
+	#endif
 }
