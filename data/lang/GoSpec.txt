@@ -6,7 +6,7 @@ GOSPEC_TRANSFERED_TO_PREVIOUS = You have been transfered back to your previous t
 GOSPEC_TRANSFERED_TO_LESS = You have been transfered to the team with less players.
 GOSPEC_TRANSFERED_TO_OPPOSITE = You have been transfered to the opposite team.
 GOSPEC_CANT_USE = You can't use this command while as a spectator.
-GOSPEC_NO_ACESS = You have no access to this command!
+GOSPEC_NO_ACCESS = You have no access to this command!
 
 [mk]
 GOSPEC_ALREADY_SPECTATOR = Vekje si spektator!
@@ -16,7 +16,7 @@ GOSPEC_TRANSFERED_TO_PREVIOUS = Prefrlen si nazad vo stariot tim.
 GOSPEC_TRANSFERED_TO_LESS = Prefrlen si vo timot so pomalku igrachi.
 GOSPEC_TRANSFERED_TO_OPPOSITE = Prefrlen si vo sprotivniot tim.
 GOSPEC_CANT_USE = Ne mozhesh da ja koristish ovaa komanda dodeka si spektator.
-GOSPEC_NO_ACESS = Nemash dostap do ovaa komanda!
+GOSPEC_NO_ACCESS = Nemash dostap do ovaa komanda!
 
 [bg]
 GOSPEC_ALREADY_SPECTATOR = Veche si spektator!
@@ -26,4 +26,4 @@ GOSPEC_TRANSFERED_TO_PREVIOUS = Be prehvurlen v stariq si otbor.
 GOSPEC_TRANSFERED_TO_LESS = Be prehvurlen v otbora s po-malko igrachi.
 GOSPEC_TRANSFERED_TO_OPPOSITE = Be prehvurlen v protivnikoviq otbor.
 GOSPEC_CANT_USE = Ne mojesh da polzvash tazi komanda dokato si spektator.
-GOSPEC_NO_ACESS = Nqmash dostup do tazi komanda!
+GOSPEC_NO_ACCESS = Nqmash dostup do tazi komanda!
